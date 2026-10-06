@@ -259,6 +259,23 @@ Products Included:
   Apple  $1.75
   Banana $1.25
   Apple  $1.75</code></pre>
+      <p><strong>LIVE AI Small Language Model (<a href="http://192.168.0.16:5003/">http://192.168.0.16:5003/</a>)</strong> — GenAI-gemma w/ Intel&reg; Advanced Matrix Extensions (Intel&reg; AMX) answering a prompt about the live camera image:</p>
+      <figure>
+        <img class="screenshot" src="images/nuc-gemma-slm.png" alt="GenAI-gemma w/ Intel AMX answering 'how many bananas in the image?' with timing details, running on CPU" />
+        <figcaption>NUC — LIVE AI Small Language Model (Gemma E2B w/ Intel AMX)</figcaption>
+      </figure>
+      <pre><code>GenAI-gemma w/Intel(R) Advanced Matrix Extensions (Intel(R) AMX)
+Prompt: how many bananas in the image?
+
+--- Response ---
+There is **one** banana in the image.
+
+--- Timing ---
+import     :  4.01 s
+load+compile:  3.61 s
+preprocess :  0.14 s
+generate   :  3.25 s  (11 tokens, 3.39 tok/s)
+real       : 11.02 s  (total wall-clock)</code></pre>
       <h3>(b) HPE DL110</h3>
       <p><strong>Xeon AI Server back-end start (<code>./9.proppos-backend-start.sh</code>)</strong> — Flask back-end serving the Proppos Gemma-4-E2B app:</p>
       <figure>
