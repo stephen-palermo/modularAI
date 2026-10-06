@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ModularAI — Xeon Edge AI & OCP 2026 Demonstration</title>
+  <style>
+    :root {
+      --intel-blue: #0068b5;
+      --intel-dark: #00285a;
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #5a6572;
+      --border: #e1e6ed;
+      --code-bg: #0d1117;
+      --code-text: #e6edf3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+    }
+    header {
+      background: linear-gradient(135deg, var(--intel-dark), var(--intel-blue));
+      color: #fff;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 auto;
+      max-width: 900px;
+      font-size: 1.9rem;
+      font-weight: 700;
+    }
+    header .tag {
+      margin-top: .75rem;
+      font-size: 1.05rem;
+      opacity: .9;
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    h2 {
+      color: var(--intel-dark);
+      border-bottom: 3px solid var(--intel-blue);
+      padding-bottom: .4rem;
+      margin-top: 0;
+      font-size: 1.5rem;
+    }
+    h3 {
+      color: var(--intel-blue);
+      font-size: 1.15rem;
+      margin-bottom: .4rem;
+    }
+    a { color: var(--intel-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #eef1f5;
+      padding: .15rem .4rem;
+      border-radius: 4px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: .9em;
+    }
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: .88rem;
+      line-height: 1.5;
+    }
+    pre code { background: none; padding: 0; color: inherit; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: .6rem .8rem;
+      text-align: left;
+    }
+    th { background: var(--intel-blue); color: #fff; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    ul, ol { padding-left: 1.4rem; }
+    li { margin: .3rem 0; }
+    .callout {
+      background: #e8f3fc;
+      border-left: 4px solid var(--intel-blue);
+      padding: .75rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      color: var(--intel-dark);
+    }
+    /* Offline CSS diagrams */
+    .diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      background: #fbfcfe;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem 1rem;
+      margin: 1rem 0;
+    }
+    .node {
+      background: #fff;
+      border: 2px solid var(--intel-blue);
+      color: var(--intel-dark);
+      border-radius: 8px;
+      padding: .55rem 1rem;
+      font-weight: 600;
+      font-size: .9rem;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+    .node.root { background: var(--intel-blue); color: #fff; border-color: var(--intel-dark); }
+    .connector { width: 2px; height: 22px; background: var(--intel-blue); }
+    .fanout {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .fanout::before {
+      content: "";
+      position: absolute;
+      top: -11px;
+      left: 12%;
+      right: 12%;
+      height: 2px;
+      background: var(--intel-blue);
+    }
+    .leaf-wrap { display: flex; flex-direction: column; align-items: center; }
+    .edge-flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .5rem;
+      justify-content: center;
+      background: #eef6ff;
+      border: 2px dashed var(--intel-blue);
+      border-radius: 10px;
+      padding: 1.25rem 1rem;
+      margin: 1rem 0;
+    }
+    .edge-flow .edge-label {
+      width: 100%;
+      text-align: center;
+      font-weight: 700;
+      color: var(--intel-dark);
+      margin-bottom: .5rem;
+    }
+    .arrow { color: var(--intel-blue); font-weight: 700; font-size: 1.3rem; }
+    .flow-branch { display: flex; flex-direction: column; gap: .5rem; }
+    .screenshot {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.12);
+      margin: .75rem 0;
+      display: block;
+    }
+    figure { margin: 1rem 0; }
+    figcaption { color: var(--muted); font-size: .85rem; margin-top: .4rem; text-align: center; }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+      padding: 2rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ModularAI — Developed and Integrated for Targeted Xeon Edge AI Customers and the Open Compute Project 2026 Demonstration</h1>
+    <div class="tag">Modular CV and GenAI on Xeon at the Edge</div>
+  </header>
+
+  <main>
+    <section id="welcome">
+      <h2>Welcome — Modular CV and GenAI on Xeon at the Edge</h2>
+      <p>Welcome! This project showcases <strong>Modular CV and GenAI on Xeon at the Edge</strong>. Where OCP offers the hardware modularity, this demo shows <strong>AI modularity at the Edge</strong> — CV / GenAI / Agentic (not live).</p>
+      <p>The live demo uses an <strong>HPE DL110</strong> with a <strong>40-core Xeon6 CPU w/ Intel AMX (no GPU!)</strong>, <strong>Proppos FastPay</strong> for the front-end computer vision object detection, encoding, and attribute association, plus an optional <strong>GenAI back-end</strong>.</p>
+      <p>Incremental CV training/encoding on the Xeon is used together with generic YOLO to identify <em>specific</em> objects (e.g., &ldquo;banana&rdquo; instead of generic &ldquo;fruit,&rdquo; along with price, calories, etc.) before encoding, and <strong>Google Gemma</strong> performs the GenAI analysis (e.g., <em>How many calories? How much do I need to pay? Any allergy concerns?</em> etc.).</p>
+      <p>In other words, this is the <strong>Proppos commercial application</strong>, &ldquo;extended&rdquo; to use the latest <strong>Google Gemma</strong> model-set and associated optimizations to serve responses in a few seconds, using just a few cores.</p>
+    </section>
+
+    <section id="prepared-by">
+      <h2>Prepared By</h2>
+      <ul>
+        <li><strong>Repository:</strong> <a href="https://github.com/stephen-palermo/modularAI.git">https://github.com/stephen-palermo/modularAI.git</a></li>
+        <li><strong>Author:</strong> Stephen Palermo — <a href="mailto:stephen.t.palermo@intel.com">stephen.t.palermo@intel.com</a>, Tech Lead Xeon Edge AI</li>
+        <li><strong>Supporting repository:</strong> <a href="https://github.com/stephen-palermo/workshop-xeon-edge-ai-gemma.git">https://github.com/stephen-palermo/workshop-xeon-edge-ai-gemma.git</a></li>
+      </ul>
+    </section>
+
+    <section id="getting-started">
+      <h2>Getting Started</h2>
+      <p>Follow these steps to showcase the technology and run the demo.</p>
+      <h3>(a) NUC</h3>
+      <ol>
+        <li><strong>Browser for LIVE AI Computer Vision:</strong> <a href="http://192.168.0.16:8081">http://192.168.0.16:8081</a></li>
+        <li><strong>Browser for LIVE AI API feeding the &ldquo;QuickBytes Game&rdquo;:</strong> <code>file:///opt/QuickBytes-OCP.demo.html</code></li>
+        <li><strong>Browser for LIVE AI Small Language Model (Gemma E2B):</strong> <a href="http://192.168.0.16:5003/">http://192.168.0.16:5003/</a></li>
+      </ol>
+      <h3>(b) Xeon AI Server — HPE DL110 w/ Xeon6 w/ Intel AMX</h3>
+      <p><strong>Desktop Terminal — START the back-end:</strong></p>
+      <pre><code>cd /opt/workshop-xeon-edge-ai-gemma
+./9.proppos-backend-start.sh</code></pre>
+    </section>
+
+    <section id="example-output">
+      <h2>Example Output</h2>
+      <p>Expected output that matches up with the <strong>Getting Started</strong> section.</p>
+      <h3>(a) NUC</h3>
+      <p><strong>LIVE AI Computer Vision (<a href="http://192.168.0.16:8081">http://192.168.0.16:8081</a>)</strong> — Fixed products captures view detecting objects in real time (e.g., Banana $1.25, Apple $1.75, Chocolate Ice Cream Cone $2.00) with confidence scores:</p>
+      <figure>
+        <img class="screenshot" src="images/nuc-computer-vision.png" alt="Proppos Fixed products captures — live computer vision detecting Banana, Apple, and Chocolate with confidence scores" />
+        <figcaption>NUC — LIVE AI Computer Vision (Proppos Fixed products captures)</figcaption>
+      </figure>
+      <pre><code>LQ S CS:[32-300-300]:00  M:[200-200-300] @30 T: 200 L: 0 H:10.0:30 R:303
+Banana    $1.25   65%   0.1037
+Apple     $1.75   42%   0.0347
+Apple     $1.75   44%   0.0322
+Chocolate ...</code></pre>
+      <p><strong>LIVE AI API feeding the &ldquo;QuickBytes Game&rdquo; (<code>file:///opt/QuickBytes-OCP.demo.html</code>)</strong> — Quick Bytes Challenge totaling the detected products against the spend limit:</p>
+      <figure>
+        <img class="screenshot" src="images/nuc-quickbytes.png" alt="QuickBytes Challenge game showing total amount $6.75 against an $8.00 reset value with a 25s countdown" />
+        <figcaption>NUC — LIVE AI API feeding the QuickBytes Game</figcaption>
+      </figure>
+      <pre><code>Quick Bytes Challenge  &lt;= Spend Limit &lt; 30 seconds
+WIN if within 50 cents without going over Spend Limit
+
+TOTAL AMOUNT:  $6.75
+RESET VALUE:   $8.00
+COUNT DOWN:    25S
+
+Products Included:
+  Chocolate Ice Cream Cone $2.00
+  Apple  $1.75
+  Banana $1.25
+  Apple  $1.75</code></pre>
+      <h3>(b) HPE DL110</h3>
+      <p><strong>Xeon AI Server back-end start (<code>./9.proppos-backend-start.sh</code>)</strong> — Flask back-end serving the Proppos Gemma-4-E2B app:</p>
+      <figure>
+        <img class="screenshot" src="images/hpe-dl110-backend.png" alt="Terminal output of the Flask back-end starting and serving on port 5003" />
+        <figcaption>HPE DL110 — Xeon AI Server back-end start</figcaption>
+      </figure>
+      <pre><code> * Serving Flask app 'backend-Proppos-gemma-4-e2b'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5003
+ * Running on http://192.168.0.16:5003
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 128-410-576</code></pre>
+    </section>
+
+    <section id="technology">
+      <h2>Technology</h2>
+      <p>The entire pipeline runs on an <strong>Intel Xeon6 CPU with Intel Advanced Matrix Extensions (Intel AMX)</strong> — <strong>no GPU required</strong>. Intel AMX is a built-in matrix-multiply accelerator (tile registers + TMUL) that dramatically speeds up the dense INT8/BF16 math at the heart of modern AI, directly on the CPU.</p>
+      <h3>(1) Intel AMX for Computer Vision</h3>
+      <ul>
+        <li><strong>Usage:</strong> The YOLO-based object detection, incremental CV training, and encoding/attribute-association work are offloaded to Intel AMX tiles, accelerating the convolution and matrix operations that dominate CV inference.</li>
+        <li><strong>Benefits:</strong> High-throughput, low-latency detection of <em>specific</em> objects (e.g., &ldquo;banana&rdquo; instead of generic &ldquo;fruit,&rdquo; with price and calories) in real time — all on the CPU, with no discrete accelerator, no data movement to a GPU, and consistent performance at the Edge.</li>
+      </ul>
+      <h3>(2) Intel AMX for Small Language Models (Gemma — not an LLM)</h3>
+      <ul>
+        <li><strong>Usage:</strong> The <strong>Google Gemma (E2B)</strong> Small Language Model inference uses Intel AMX to accelerate the BF16/INT8 matrix multiplications in the transformer layers.</li>
+        <li><strong>Benefits:</strong> GenAI responses (e.g., <em>How many calories? How much do I need to pay? Any allergy concerns?</em>) are served in <strong>a few seconds using just a few cores</strong>. Because it&rsquo;s a right-sized <em>Small</em> Language Model — not a large LLM — Intel AMX delivers the needed throughput without a GPU, keeping the model and memory footprint compact and Edge-friendly.</li>
+      </ul>
+      <h3>(3) Modular CV + SLM for LangChain Agentic Workflows</h3>
+      <ul>
+        <li><strong>Usage:</strong> Both the computer vision stage and the Gemma Small Language Model are composed into <strong>LangChain-based agentic workflows</strong>, where CV detections feed the SLM for reasoning and the agent orchestrates multi-step tasks.</li>
+        <li><strong>Benefits of Intel Xeon w/ AMX:</strong>
+          <ul>
+            <li><strong>Everything stays on the CPU</strong> — CV and SLM share the same Intel AMX-accelerated host, with no cross-device data transfers.</li>
+            <li><strong>No GPU</strong> — no discrete accelerator to provision, cool, or maintain.</li>
+            <li><strong>Lower power</strong> — no GPU power envelope; efficient CPU-only operation.</li>
+            <li><strong>Lower total cost of ownership (TCO)</strong> — simpler, modular hardware that leverages the OCP platform, reducing acquisition and operational costs at the Edge.</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section id="network">
+      <h2>Network Architecture Example</h2>
+      <p>The demo runs on a compact, modular Edge network. The Intel Corporation uplink connects through the <strong>Modular AI for OCP Router</strong> into a <strong>USW Flex 2 switch</strong>, which fans out to the Xeon AI server (and its iLO management), the Gen12 node, the G5 Flex camera, and the NUC front-end.</p>
+      <div class="diagram">
+        <div class="node root">&#127760; Intel Corporation</div>
+        <div class="connector"></div>
+        <div class="node">Modular AI for OCP Router</div>
+        <div class="connector"></div>
+        <div class="node">Switch (USW Flex 2&hellip;)</div>
+        <div class="connector"></div>
+        <div class="fanout">
+          <div class="leaf-wrap"><div class="connector"></div><div class="node">ILO.HPE.DL110.Xeon6</div></div>
+          <div class="leaf-wrap"><div class="connector"></div><div class="node">HPE.DL110-Gen12</div></div>
+          <div class="leaf-wrap"><div class="connector"></div><div class="node">G5 Flex</div></div>
+          <div class="leaf-wrap"><div class="connector"></div><div class="node">NUC</div></div>
+        </div>
+      </div>
+      <figure>
+        <img class="screenshot" src="images/network-architecture.png" alt="Network topology map: Intel Corporation to Modular AI for OCP Router to USW Flex 2 switch, branching to ILO.HPE.DL110.Xeon6, HPE.DL110-Gen12, G5 Flex, and NUC" />
+        <figcaption>Network Architecture — topology map</figcaption>
+      </figure>
+      <table>
+        <thead>
+          <tr><th>Node</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Intel Corporation</strong></td><td>Internet / corporate uplink</td></tr>
+          <tr><td><strong>Modular AI for OCP Router</strong></td><td>Edge gateway/router for the Modular AI for OCP network</td></tr>
+          <tr><td><strong>Switch (USW Flex 2)</strong></td><td>Distribution switch connecting all Edge devices</td></tr>
+          <tr><td><strong>ILO.HPE.DL110.Xeon6</strong></td><td>Out-of-band iLO management for the Xeon6 AI server</td></tr>
+          <tr><td><strong>HPE.DL110-Gen12</strong></td><td>HPE DL110 Gen12 Xeon6 w/ Intel AMX — AI server running the CV + Gemma back-end</td></tr>
+          <tr><td><strong>G5 Flex</strong></td><td>Camera providing the live video feed for computer vision</td></tr>
+          <tr><td><strong>NUC</strong></td><td>Front-end client running the demo browsers (CV, QuickBytes game, Gemma SLM)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="showcase-flow">
+      <h2>Modular Technology Showcase Flow</h2>
+      <p>This demo showcases AI modularity by chaining independent stages — each running <strong>on the Edge, entirely on Intel Xeon w/ AMX, with NO GPU</strong>.</p>
+      <ol>
+        <li><strong>Computer Vision + SWIN encoding (Commercial App = Proppos FastPay):</strong> Computer vision first identifies basic objects (e.g., <em>fruit</em>), then <strong>SWIN encoding</strong> further identifies the <em>specific</em> product (e.g., <em>banana</em>) for a <strong>FastPay</strong>-type application. This is the commercial Proppos application.</li>
+        <li><strong>Commercial App API &rarr; Price-is-Right challenge:</strong> The commercial app API transfers the computer vision output for further processing, such as a <strong>challenge &ldquo;Price-is-Right&rdquo; game</strong> — the objective is to match a random amount in <strong>less than 30 seconds</strong> by reading the live output of computer vision.</li>
+        <li><strong>Computer Vision &rarr; Small Language Model (Google Gemma):</strong> The computer vision output is fed into a <strong>Small Language Model</strong> for further analysis. The SLM shown is the commercial <strong>Google Gemma</strong> model.</li>
+      </ol>
+      <div class="edge-flow">
+        <div class="edge-label">Intel Xeon6 w/ AMX &mdash; On the Edge, NO GPU</div>
+        <div class="node">G5 Flex Camera</div>
+        <span class="arrow">&rarr;</span>
+        <div class="node">Computer Vision<br/>(identify object: fruit)</div>
+        <span class="arrow">&rarr;</span>
+        <div class="node">SWIN Encoding<br/>(specific product: banana)</div>
+        <span class="arrow">&rarr;</span>
+        <div class="node root">Proppos FastPay<br/>Commercial App + API</div>
+        <span class="arrow">&rarr;</span>
+        <div class="flow-branch">
+          <div class="node">Price-is-Right Game<br/>(match amount &lt; 30s)</div>
+          <div class="node">Google Gemma<br/>Small Language Model</div>
+        </div>
+      </div>
+      <p class="callout">All running on the Edge, all on Intel Xeon w/ AMX — NO GPU.</p>
+    </section>
+  </main>
+
+  <footer>
+    Prepared by Stephen Palermo — Tech Lead Xeon Edge AI &middot; Intel Corporation &middot; Open Compute Project 2026 Demonstration
+  </footer>
+</body>
+</html>
